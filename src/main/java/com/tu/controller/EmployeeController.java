@@ -36,7 +36,7 @@ public class EmployeeController extends HttpServlet {
     private IEmployeeService employeeService;
 
     @PostMapping("/login")
-    public R<Employee> Login(@RequestBody Employee employee, HttpServletRequest request, HttpServletResponse response) {
+    public R<Employee> Login(@RequestBody Employee employee, HttpServletRequest request) {
         String password = employee.getPassword();
         password =  DigestUtils.md5DigestAsHex(password.getBytes());
 
@@ -56,7 +56,7 @@ public class EmployeeController extends HttpServlet {
         if (e.getStatus() == 0) {
             return R.error("账号被封禁！");
         }
-        request.setAttribute("employee", e.getId());
+        request.getSession().setAttribute("employee", e.getId());
         return R.success(e);
     }
 

@@ -2,6 +2,7 @@ package com.tu.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.tu.common.BaseContext;
 import com.tu.common.R;
 import com.tu.entity.Employee;
 import com.tu.service.IEmployeeService;
@@ -13,7 +14,6 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -33,10 +33,17 @@ public class EmployeeController extends HttpServlet {
     @Autowired
     private IEmployeeService employeeService;
 
+    /**
+     * 登入
+     *
+     * @param employee 职工类
+     * @param request
+     * @return R
+     */
     @PostMapping("/login")
     public R<Employee> Login(@RequestBody Employee employee, HttpServletRequest request) {
         String password = employee.getPassword();
-        password =  DigestUtils.md5DigestAsHex(password.getBytes());
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
 
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
         lqw.eq(Employee::getUsername, employee.getUsername());
@@ -55,12 +62,58 @@ public class EmployeeController extends HttpServlet {
             return R.error("账号被封禁！");
         }
         request.getSession().setAttribute("employee", e.getId());
+
         return R.success(e);
     }
 
+    /**
+     * 登出
+     *
+     * @param request
+     * @return R
+     */
     @PostMapping("/logout")
     public R<String> Logout(HttpServletRequest request) {
         request.removeAttribute("employee");
         return R.success("退出成功！");
     }
+
+    /**
+     * 新增职工
+     *
+     * @return R
+     */
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
+        log.info("新增用户：{}", employee.toString());
+        // 设置初始密码并加密
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
+
+        // 填充新增时间、修改时间、新增操作者、修改操作者
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        Long empId = (Long) request.getSession().getAttribute("employee");
+//        employee.setCreateUser(empId);
+//        employee.setUpdateUser(empId);
+
+        // 自动填充
+        // 事关MyMetaObjectHandler
+        // 测试两个类是否属于同个线程
+//        Long id = Thread.currentThread().getId();
+//        log.info("servlet类：{}", id);
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        // 执行新增操作
+        log.info("执行新增操作：{}", employee);
+        boolean save = employeeService.save(employee);
+        if (save) {
+            return R.success("新增员工成功");
+        }
+        return R.error("新增失败");
+    }
+
 }

@@ -2,6 +2,8 @@ package com.tu.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tu.common.BaseContext;
 import com.tu.common.R;
 import com.tu.entity.Employee;
@@ -9,12 +11,10 @@ import com.tu.service.IEmployeeService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -116,4 +116,24 @@ public class EmployeeController extends HttpServlet {
         return R.error("新增失败");
     }
 
+    /**
+     * 分页查询
+     * @param p 当前页数
+     * @param pSize 页面大小
+     * @param name 查询名字关键字
+     * @return IPage
+     */
+    @GetMapping("/page")
+    public R<IPage<Employee>> getByPage(@RequestParam(value = "page", required = false, defaultValue = "1") Integer p,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pSize,
+                                        String name) {
+        IPage<Employee> page = new Page<>(p, pSize);
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
+        // 根据传进姓名模糊查询（非空判断）
+        lqw.like(StringUtils.isNotEmpty(name), Employee::getName, name);
+        // 根据最后修改时间排序
+        lqw.orderByDesc(Employee::getUpdateTime);
+        page = employeeService.page(page);
+        return R.success(page);
+    }
 }

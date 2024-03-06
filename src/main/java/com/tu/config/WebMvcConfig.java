@@ -1,9 +1,14 @@
 package com.tu.config;
 
+import com.tu.common.JacksonObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+
+import java.util.List;
 
 /**
  * @author JiFeiYe
@@ -27,5 +32,18 @@ public class WebMvcConfig extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/front/**")
                 .addResourceLocations("classpath:/front/");
         log.info("{} --> {}", "/front/**", "classpath:/front/");
+    }
+
+    /**
+     * 设置对象映射器
+     *
+     * @param converters
+     */
+    @Override
+    protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        log.info("对象映射器");
+        MappingJackson2HttpMessageConverter mjmc = new MappingJackson2HttpMessageConverter();
+        mjmc.setObjectMapper(new JacksonObjectMapper());
+        converters.add(0, mjmc);
     }
 }

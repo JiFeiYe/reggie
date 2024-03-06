@@ -118,22 +118,59 @@ public class EmployeeController extends HttpServlet {
 
     /**
      * 分页查询
-     * @param p 当前页数
+     *
+     * @param p     当前页数
      * @param pSize 页面大小
-     * @param name 查询名字关键字
+     * @param name  查询名字关键字
      * @return IPage
      */
     @GetMapping("/page")
     public R<IPage<Employee>> getByPage(@RequestParam(value = "page", required = false, defaultValue = "1") Integer p,
                                         @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pSize,
                                         String name) {
+        log.info("分页查询");
         IPage<Employee> page = new Page<>(p, pSize);
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
         // 根据传进姓名模糊查询（非空判断）
         lqw.like(StringUtils.isNotEmpty(name), Employee::getName, name);
         // 根据最后修改时间排序
         lqw.orderByDesc(Employee::getUpdateTime);
-        page = employeeService.page(page);
+        page = employeeService.page(page, lqw);
         return R.success(page);
     }
+
+    /**
+     * 员工信息修改/状态更新
+     *
+     * @param request
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public R<String> editEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+        log.info("员工信息修改/状态更新");
+
+        // 除了修改员工信息/更新员工状态，还得更新updateTime和updateUser
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        employeeService.updateById(employee);
+        return R.success("员工状态更新成功");
+
+        // todo: 更新完员工状态后分页查询不应自动回到第一页
+    }
+
+    @GetMapping("/{id}")
+    public R<Employee> getById(@PathVariable Long id) {
+        Employee e = employeeService.getById(id);
+        if (e != null) {
+            return R.success(e);
+        }
+        return R.error("未查询到员工");
+    }
+
+
 }

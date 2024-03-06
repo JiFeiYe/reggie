@@ -1,8 +1,7 @@
 package com.tu.service;
 
-import com.tu.common.R;
-import com.tu.entity.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tu.entity.Category;
 
 /**
  * <p>
@@ -14,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICategoryService extends IService<Category> {
 
-    public R<String> removeCategory();
+    public void removeCategory(Long id);
 }

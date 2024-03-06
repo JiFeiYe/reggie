@@ -31,7 +31,8 @@ public class CategoryController {
 
     /**
      * 菜品及套餐分类的分页查询
-     * @param page 当前页数
+     *
+     * @param page     当前页数
      * @param pageSize 页面大小
      * @return IPage
      */
@@ -47,11 +48,12 @@ public class CategoryController {
 
     /**
      * 新增菜品及套餐分类
+     *
      * @param category
      * @return R
      */
     @PostMapping
-    public R<String> addCategory(HttpServletRequest request,@RequestBody Category category) {
+    public R<String> addCategory(HttpServletRequest request, @RequestBody Category category) {
         log.info("新增菜品及套餐分类：{}", category);
 
         Object o = request.getSession().getAttribute("employee");
@@ -62,5 +64,39 @@ public class CategoryController {
 
         categoryService.save(category);
         return R.success("保存成功");
+    }
+
+    /**
+     * 删除分类
+     *
+     * @param id 待删除分类id
+     * @return R
+     */
+    @DeleteMapping
+    public R<String> deleteCategory(Long id) {
+        log.info("开始删除分类：{}", id);
+
+        categoryService.removeCategory(id);
+        return R.success("删除成功！");
+    }
+
+    /**
+     * 修改分类信息
+     *
+     * @param category
+     * @return R
+     */
+    @PutMapping
+    public R<String> editCategory(HttpServletRequest request, @RequestBody Category category) {
+        log.info("修改分类信息：{}", category);
+
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        categoryService.updateById(category);
+        return R.success("修改成功！");
     }
 }

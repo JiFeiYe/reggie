@@ -32,4 +32,11 @@ public class GlobalException {
         return R.error("未知错误");
     }
 
+    @ExceptionHandler(CustomerException.class)
+    public R<String> exceptionHandler(CustomerException ex) {
+        String message = ex.getMessage();
+        log.error(message);
+        return R.error(message);
+    }
+
 }

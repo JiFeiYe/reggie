@@ -33,3 +33,5 @@ mybatis-plus:
 #      logic-delete-value: 1 # 删除后为1
 server:
   port: 8080
+reggie:
+  path: D:\CODE\JAVA\reggie\img\

@@ -29,6 +29,7 @@ public class CommonController {
 
     /**
      * 上传图片
+     *
      * @param file 文件
      * @return R
      */
@@ -51,7 +52,7 @@ public class CommonController {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        try{
+        try {
             log.info("图片转存：{}", (basePath + filename));
             // 转存文件到指定位置
             file.transferTo(new File(basePath + filename));
@@ -61,6 +62,12 @@ public class CommonController {
         return R.success(filename);
     }
 
+    /**
+     * 将图片写入浏览器
+     *
+     * @param response
+     * @param name
+     */
     @GetMapping("/download")
     public void download(HttpServletResponse response, String name) {
         log.info("图片写入浏览器：{}", name);

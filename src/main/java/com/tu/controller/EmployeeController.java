@@ -121,7 +121,7 @@ public class EmployeeController extends HttpServlet {
      *
      * @param page     当前页数
      * @param pageSize 页面大小
-     * @param name  查询名字关键字
+     * @param name     查询名字关键字
      * @return IPage
      */
     @GetMapping("/page")

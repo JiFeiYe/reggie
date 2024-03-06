@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * <p>
  * 菜品及套餐分类 前端控制器
@@ -39,6 +41,7 @@ public class CategoryController {
     @GetMapping("/page")
     public R<IPage<Category>> getCategoryPage(Integer page, Integer pageSize) {
         log.info("菜品以及套餐分类的分页查询, page:{}, pageSize:{}", page, pageSize);
+
         IPage<Category> p = new Page<>(page, pageSize);
         LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
         lqw.orderByAsc(Category::getSort).orderByDesc(Category::getUpdateTime);
@@ -98,5 +101,21 @@ public class CategoryController {
 
         categoryService.updateById(category);
         return R.success("修改成功！");
+    }
+
+    /**
+     * 获取菜品分类列表
+     *
+     * @param type
+     * @return R
+     */
+    @GetMapping("list")
+    public R<List<Category>> getCategoryList(Integer type) {
+        log.info("获取菜品分类列表，type: {}", type);
+
+        LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Category::getType, type).orderByDesc(Category::getUpdateTime);
+        List<Category> lts = categoryService.list(lqw);
+        return R.success(lts);
     }
 }

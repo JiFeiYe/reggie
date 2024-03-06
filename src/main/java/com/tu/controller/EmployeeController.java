@@ -119,24 +119,22 @@ public class EmployeeController extends HttpServlet {
     /**
      * 分页查询
      *
-     * @param p     当前页数
-     * @param pSize 页面大小
+     * @param page     当前页数
+     * @param pageSize 页面大小
      * @param name  查询名字关键字
      * @return IPage
      */
     @GetMapping("/page")
-    public R<IPage<Employee>> getByPage(@RequestParam(value = "page", required = false, defaultValue = "1") Integer p,
-                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pSize,
-                                        String name) {
+    public R<IPage<Employee>> getByPage(Integer page, Integer pageSize, String name) {
         log.info("分页查询");
-        IPage<Employee> page = new Page<>(p, pSize);
+        IPage<Employee> p = new Page<>(page, pageSize);
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
         // 根据传进姓名模糊查询（非空判断）
         lqw.like(StringUtils.isNotEmpty(name), Employee::getName, name);
         // 根据最后修改时间排序
         lqw.orderByDesc(Employee::getUpdateTime);
-        page = employeeService.page(page, lqw);
-        return R.success(page);
+        p = employeeService.page(p, lqw);
+        return R.success(p);
     }
 
     /**

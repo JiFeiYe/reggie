@@ -31,4 +31,5 @@ public class GlobalException {
         }
         return R.error("未知错误");
     }
+
 }

@@ -13,5 +13,5 @@ import com.tu.entity.Category;
  */
 public interface ICategoryService extends IService<Category> {
 
-    public void removeCategory(Long id);
+    void removeCategory(Long id);
 }

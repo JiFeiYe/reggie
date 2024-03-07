@@ -1,6 +1,7 @@
 package com.tu.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tu.dto.DishDto;
 import com.tu.entity.Dish;
 
 /**
@@ -13,4 +14,7 @@ import com.tu.entity.Dish;
  */
 public interface IDishService extends IService<Dish> {
 
+    void saveWithFlavor(DishDto dishDto);
+
+    void updateWithFlavor(DishDto dishDto);
 }

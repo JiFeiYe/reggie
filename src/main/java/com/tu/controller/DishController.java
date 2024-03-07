@@ -1,8 +1,28 @@
 package com.tu.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tu.common.BaseContext;
+import com.tu.common.R;
+import com.tu.dto.DishDto;
+import com.tu.entity.Category;
+import com.tu.entity.Dish;
+import com.tu.entity.DishFlavor;
+import com.tu.service.ICategoryService;
+import com.tu.service.IDishFlavorService;
+import com.tu.service.IDishService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,6 +34,114 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/dish")
+@Slf4j
 public class DishController {
 
+    @Value("${reggie.path}")
+    private String basePath;
+
+    @Autowired
+    private IDishService dishService;
+
+    @Autowired
+    private IDishFlavorService dishFlavorService;
+
+    @Autowired
+    private ICategoryService categoryService;
+
+    /**
+     * 多表新增
+     *
+     * @param dishDto Dish+DishFlavor
+     * @return String
+     */
+    @PostMapping
+    public R<String> addDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
+        log.info("多表新增 dishDto: {}", dishDto);
+
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        dishService.saveWithFlavor(dishDto);
+        return R.success("保存成功");
+    }
+
+    /**
+     * 多表查询分页
+     *
+     * @param page     当前页面
+     * @param pageSize 页面大小
+     * @param name     模糊查询
+     * @return IPage
+     */
+    @GetMapping("/page")
+    public R<IPage<DishDto>> getDishPage(HttpServletResponse response, Integer page, Integer pageSize, String name) {
+        log.info("多表查询分页");
+
+        // 获取主表分页信息
+        IPage<Dish> dishIPage = new Page<>(page, pageSize);
+        LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
+        lqw.like(StringUtils.isNotEmpty(name), Dish::getName, name)
+                .orderByDesc(Dish::getUpdateTime);
+        dishService.page(dishIPage);
+
+        // 将主表分页信息拷贝到DishDto中
+        IPage<DishDto> dishDtoIPage = new Page<>();
+        BeanUtils.copyProperties(dishIPage, dishDtoIPage, "Records");
+        // 遍历主表records， 往DishDto中补充categoryName
+        List<Dish> records = dishIPage.getRecords();
+        List<DishDto> dishDtos = records.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            // 查询出categoryName，若非空则将其放进dishDto
+            Category category = categoryService.getById(item.getCategoryId());
+            if (category != null) {
+                dishDto.setCategoryName(category.getName());
+            }
+            return dishDto;
+        }).toList();
+
+        dishDtoIPage.setRecords(dishDtos);
+        return R.success(dishDtoIPage);
+    }
+
+    @GetMapping("/{id}")
+    public R<DishDto> getDish(@PathVariable Long id) {
+        log.info("多表查询单id");
+
+        // 先查主表
+        Dish dish = dishService.getById(id);
+        DishDto dishDto = new DishDto();
+        BeanUtils.copyProperties(dish, dishDto);
+        // 再查从表
+        LambdaQueryWrapper<DishFlavor> dishDtoLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        dishDtoLambdaQueryWrapper.eq(DishFlavor::getDishId, id);
+        List<DishFlavor> dishFlavors = dishFlavorService.list(dishDtoLambdaQueryWrapper);
+        dishDto.setFlavors(dishFlavors);
+
+        return R.success(dishDto);
+    }
+
+    /**
+     * 多表修改
+     *
+     * @param dishDto 主从混合表
+     * @return String
+     */
+    @PutMapping
+    public R<String> editDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
+        log.info("多表修改dish：{}", dishDto);
+
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        dishService.updateWithFlavor(dishDto);
+        return R.success("修改成功！");
+    }
 }

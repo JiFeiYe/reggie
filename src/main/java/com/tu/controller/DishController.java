@@ -50,14 +50,14 @@ public class DishController {
     private ICategoryService categoryService;
 
     /**
-     * 多表新增
+     * 菜品多表新增
      *
      * @param dishDto Dish+DishFlavor
      * @return String
      */
     @PostMapping
     public R<String> addDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
-        log.info("多表新增 dishDto: {}", dishDto);
+        log.info("菜品多表新增 dishDto: {}", dishDto);
 
         Object o = request.getSession().getAttribute("employee");
         if (o != null) {
@@ -70,7 +70,7 @@ public class DishController {
     }
 
     /**
-     * 多表查询分页
+     * 菜品多表查询分页
      *
      * @param page     当前页面
      * @param pageSize 页面大小
@@ -79,7 +79,7 @@ public class DishController {
      */
     @GetMapping("/page")
     public R<IPage<DishDto>> getDishPage(HttpServletResponse response, Integer page, Integer pageSize, String name) {
-        log.info("多表查询分页");
+        log.info("菜品多表查询分页");
 
         // 获取主表分页信息
         IPage<Dish> dishIPage = new Page<>(page, pageSize);
@@ -110,7 +110,7 @@ public class DishController {
 
     @GetMapping("/{id}")
     public R<DishDto> getDish(@PathVariable Long id) {
-        log.info("多表查询单id");
+        log.info("菜品多表查询单id");
 
         // 先查主表
         Dish dish = dishService.getById(id);
@@ -120,7 +120,9 @@ public class DishController {
         LambdaQueryWrapper<DishFlavor> dishDtoLambdaQueryWrapper = new LambdaQueryWrapper<>();
         dishDtoLambdaQueryWrapper.eq(DishFlavor::getDishId, id);
         List<DishFlavor> dishFlavors = dishFlavorService.list(dishDtoLambdaQueryWrapper);
-        dishDto.setFlavors(dishFlavors);
+        if (dishFlavors != null){
+            dishDto.setFlavors(dishFlavors);
+        }
 
         return R.success(dishDto);
     }
@@ -133,7 +135,7 @@ public class DishController {
      */
     @PutMapping
     public R<String> editDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
-        log.info("多表修改dish：{}", dishDto);
+        log.info("菜品多表修改dish：{}", dishDto);
 
         Object o = request.getSession().getAttribute("employee");
         if (o != null) {
@@ -143,5 +145,71 @@ public class DishController {
 
         dishService.updateWithFlavor(dishDto);
         return R.success("修改成功！");
+    }
+
+    /**
+     * 多表删除
+     * @param ids DishId列表
+     * @return String
+     */
+    @DeleteMapping
+    public R<String> deleteDish(@RequestParam List<Long> ids) {
+        log.info("多表删除 DishIds:{}", ids);
+
+        // 先删从表
+        LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorLambdaQueryWrapper.in(DishFlavor::getDishId, ids);
+        dishFlavorService.remove(dishFlavorLambdaQueryWrapper);
+
+        // 再删主表
+        dishService.removeBatchByIds(ids);
+
+        return R.success("删除成功");
+    }
+
+    /**
+     * 单独/批量停售
+     * @param ids DishId列表
+     * @return String
+     */
+    @PostMapping("/status/0")
+    public R<String> dishStatusByStatus1(HttpServletRequest request, @RequestParam List<Long> ids) {
+        log.info("单独/批量停售 DishIds:{}", ids);
+
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
+        lqw.in(Dish::getId, ids);
+        Dish dish = new Dish();
+        dish.setStatus(0);
+        dishService.update(dish, lqw);
+        return R.success("停售成功！");
+    }
+
+    /**
+     * 单独/批量启售
+     * @param ids DishId列表
+     * @return String
+     */
+    @PostMapping("/status/1")
+    public R<String> dishStatusByStatus2(HttpServletRequest request, @RequestParam List<Long> ids) {
+        log.info("单独/批量启售 DishIds:{}", ids);
+
+        Object o = request.getSession().getAttribute("employee");
+        if (o != null) {
+            log.info("将id：{} 放入线程", o);
+            BaseContext.setCurrentId((Long) o);
+        }
+
+        LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
+        lqw.in(Dish::getId, ids);
+        Dish dish = new Dish();
+        dish.setStatus(1);
+        dishService.update(dish, lqw);
+        return R.success("启售成功！");
     }
 }

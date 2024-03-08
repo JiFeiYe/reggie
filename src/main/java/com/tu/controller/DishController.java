@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,9 +38,6 @@ import java.util.List;
 @Slf4j
 public class DishController {
 
-    @Value("${reggie.path}")
-    private String basePath;
-
     @Autowired
     private IDishService dishService;
 
@@ -56,14 +54,8 @@ public class DishController {
      * @return String
      */
     @PostMapping
-    public R<String> addDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
+    public R<String> addDish(@RequestBody DishDto dishDto) {
         log.info("菜品多表新增 dishDto: {}", dishDto);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         dishService.saveWithFlavor(dishDto);
         return R.success("保存成功");
@@ -120,7 +112,7 @@ public class DishController {
         LambdaQueryWrapper<DishFlavor> dishDtoLambdaQueryWrapper = new LambdaQueryWrapper<>();
         dishDtoLambdaQueryWrapper.eq(DishFlavor::getDishId, id);
         List<DishFlavor> dishFlavors = dishFlavorService.list(dishDtoLambdaQueryWrapper);
-        if (dishFlavors != null){
+        if (dishFlavors != null) {
             dishDto.setFlavors(dishFlavors);
         }
 
@@ -134,14 +126,8 @@ public class DishController {
      * @return String
      */
     @PutMapping
-    public R<String> editDish(HttpServletRequest request, @RequestBody DishDto dishDto) {
+    public R<String> editDish(@RequestBody DishDto dishDto) {
         log.info("菜品多表修改dish：{}", dishDto);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         dishService.updateWithFlavor(dishDto);
         return R.success("修改成功！");
@@ -149,9 +135,11 @@ public class DishController {
 
     /**
      * 多表删除
+     *
      * @param ids DishId列表
      * @return String
      */
+    @Transactional
     @DeleteMapping
     public R<String> deleteDish(@RequestParam List<Long> ids) {
         log.info("多表删除 DishIds:{}", ids);
@@ -169,18 +157,13 @@ public class DishController {
 
     /**
      * 单独/批量停售
+     *
      * @param ids DishId列表
      * @return String
      */
     @PostMapping("/status/0")
-    public R<String> dishStatusByStatus1(HttpServletRequest request, @RequestParam List<Long> ids) {
+    public R<String> dishStatusByStatus1(@RequestParam List<Long> ids) {
         log.info("单独/批量停售 DishIds:{}", ids);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
         lqw.in(Dish::getId, ids);
@@ -192,18 +175,13 @@ public class DishController {
 
     /**
      * 单独/批量启售
+     *
      * @param ids DishId列表
      * @return String
      */
     @PostMapping("/status/1")
-    public R<String> dishStatusByStatus2(HttpServletRequest request, @RequestParam List<Long> ids) {
+    public R<String> dishStatusByStatus2(@RequestParam List<Long> ids) {
         log.info("单独/批量启售 DishIds:{}", ids);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
         lqw.in(Dish::getId, ids);
@@ -211,5 +189,22 @@ public class DishController {
         dish.setStatus(1);
         dishService.update(dish, lqw);
         return R.success("启售成功！");
+    }
+
+    /**
+     * 菜品分类查询对应的菜品数据
+     *
+     * @param categoryId 套餐ID
+     * @return List-Dish
+     */
+    @GetMapping("/list")
+    public R<List<Dish>> queryDishList(Long categoryId) {
+        log.info("菜品分类查询对应的菜品数据 categoryId: {}", categoryId);
+
+        LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Dish::getCategoryId, categoryId)
+                .eq(Dish::getStatus, 1);
+        List<Dish> dishes = dishService.list(lqw);
+        return R.success(dishes);
     }
 }

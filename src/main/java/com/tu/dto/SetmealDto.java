@@ -1,7 +1,7 @@
 package com.tu.dto;
 
-import com.tu.entity.Dish;
-import com.tu.entity.DishFlavor;
+import com.tu.entity.Setmeal;
+import com.tu.entity.SetmealDish;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -14,10 +14,9 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class DishDto extends Dish {
+public class SetmealDto extends Setmeal{
 
-
-    private List<DishFlavor> flavors = new ArrayList<>();
+    private List<SetmealDish> setmealDishes = new ArrayList<>();
 
     private String categoryName;
 }

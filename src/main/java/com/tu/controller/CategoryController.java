@@ -56,14 +56,8 @@ public class CategoryController {
      * @return R
      */
     @PostMapping
-    public R<String> addCategory(HttpServletRequest request, @RequestBody Category category) {
+    public R<String> addCategory(@RequestBody Category category) {
         log.info("新增菜品及套餐分类：{}", category);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         categoryService.save(category);
         return R.success("保存成功");
@@ -90,15 +84,8 @@ public class CategoryController {
      * @return R
      */
     @PutMapping
-    public R<String> editCategory(HttpServletRequest request, @RequestBody Category category) {
+    public R<String> editCategory(@RequestBody Category category) {
         log.info("修改分类信息：{}", category);
-
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
-
         categoryService.updateById(category);
         return R.success("修改成功！");
     }

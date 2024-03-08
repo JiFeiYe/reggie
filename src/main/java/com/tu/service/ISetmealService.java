@@ -1,7 +1,10 @@
 package com.tu.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tu.dto.SetmealDto;
 import com.tu.entity.Setmeal;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.tu.entity.Setmeal;
  */
 public interface ISetmealService extends IService<Setmeal> {
 
+    void saveWithSetmealDish(SetmealDto setmealDto);
+
+    void updateWithSetmealDish(SetmealDto setmealDto);
+
+    void removeSetmeal(List<Long> ids);
 }

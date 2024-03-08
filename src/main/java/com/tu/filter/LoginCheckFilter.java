@@ -1,6 +1,7 @@
 package com.tu.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.tu.common.BaseContext;
 import com.tu.common.R;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
@@ -34,7 +35,8 @@ public class LoginCheckFilter implements Filter {
         String[] whiteList = {
                 "/employee/login",
                 "/employee/logout",
-                "/backend/**" // todo: 怎么全给放行了？
+                "/backend/**",
+                "/front/**"
         };
         if (check(whiteList, url)) {
             filterChain.doFilter(servletRequest, servletResponse);
@@ -53,6 +55,9 @@ public class LoginCheckFilter implements Filter {
         Object employee = request.getSession().getAttribute("employee");
         if (employee != null) {
             // 若已经登陆（session有信息），放行
+            log.info("将id：{} 放入线程", employee);
+            BaseContext.setCurrentId((Long) employee);
+
             filterChain.doFilter(servletRequest, servletResponse);
             log.info("已经登录，放行");
             return;

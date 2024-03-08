@@ -84,7 +84,7 @@ public class EmployeeController extends HttpServlet {
      * @return R
      */
     @PostMapping
-    public R<String> save(HttpServletRequest request, @RequestBody Employee employee) {
+    public R<String> save(@RequestBody Employee employee) {
         log.info("新增用户：{}", employee.toString());
         // 设置初始密码并加密
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
@@ -101,11 +101,11 @@ public class EmployeeController extends HttpServlet {
         // 测试两个类是否属于同个线程
 //        Long id = Thread.currentThread().getId();
 //        log.info("servlet类：{}", id);
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
+//        Object o = request.getSession().getAttribute("employee");
+//        if (o != null) {
+//            log.info("将id：{} 放入线程", o);
+//            BaseContext.setCurrentId((Long) o);
+//        }
 
         // 执行新增操作
         log.info("执行新增操作：{}", employee);
@@ -145,15 +145,8 @@ public class EmployeeController extends HttpServlet {
      * @return
      */
     @PutMapping
-    public R<String> editEmployee(HttpServletRequest request, @RequestBody Employee employee) {
+    public R<String> editEmployee(@RequestBody Employee employee) {
         log.info("员工信息修改/状态更新");
-
-        // 除了修改员工信息/更新员工状态，还得更新updateTime和updateUser
-        Object o = request.getSession().getAttribute("employee");
-        if (o != null) {
-            log.info("将id：{} 放入线程", o);
-            BaseContext.setCurrentId((Long) o);
-        }
 
         employeeService.updateById(employee);
         return R.success("员工状态更新成功");

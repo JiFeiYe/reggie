@@ -1,0 +1,31 @@
+dataSources:
+  master:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource # 数据源完整类名
+    driverClassName: com.mysql.cj.jdbc.Driver # 数据库驱动类名，以数据库连接池自身配置为准
+    url: jdbc:mysql://192.168.38.129:3306/reggie # 数据库 URL 连接，以数据库连接池自身配置为准
+    username: ll
+    password: 1
+  slave:
+    dataSourceClassName: com.alibaba.druid.pool.DruidDataSource # 数据源完整类名
+    driverClassName: com.mysql.cj.jdbc.Driver # 数据库驱动类名，以数据库连接池自身配置为准
+    url: jdbc:mysql://192.168.38.131:3306/reggie # 数据库 URL 连接，以数据库连接池自身配置为准
+    username: ll
+    password: 1
+
+rules:
+  - !READWRITE_SPLITTING
+    dataSources:
+      masterslave: # 读写分离逻辑数据源名称
+        staticStrategy: # 读写分离类型
+          writeDataSourceName: master # 写库数据源名称
+          readDataSourceNames:
+            - slave # 读库数据源名称，多个从数据源用逗号分隔
+        loadBalancerName: random # 负载均衡算法名称
+
+    # 负载均衡算法配置
+    loadBalancers:
+      random: # 负载均衡算法名称
+        type: RANDOM # 负载均衡算法类型
+
+props:
+  sql-show: true

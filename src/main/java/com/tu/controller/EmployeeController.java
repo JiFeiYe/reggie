@@ -4,7 +4,6 @@ package com.tu.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tu.common.BaseContext;
 import com.tu.common.R;
 import com.tu.entity.Employee;
 import com.tu.service.IEmployeeService;
@@ -37,7 +36,7 @@ public class EmployeeController extends HttpServlet {
      * 登入
      *
      * @param employee 职工类
-     * @param request
+     * @param request request
      * @return R
      */
     @PostMapping("/login")
@@ -69,7 +68,7 @@ public class EmployeeController extends HttpServlet {
     /**
      * 登出
      *
-     * @param request
+     * @param request request
      * @return R
      */
     @PostMapping("/logout")

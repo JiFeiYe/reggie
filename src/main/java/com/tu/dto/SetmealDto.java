@@ -14,7 +14,7 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SetmealDto extends Setmeal{
+public class SetmealDto extends Setmeal {
 
     private List<SetmealDish> setmealDishes = new ArrayList<>();
 

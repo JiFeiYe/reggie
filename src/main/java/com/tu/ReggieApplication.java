@@ -22,8 +22,6 @@ public class ReggieApplication {
         log.info("项目启动");
 
 
-
-
         Dish dish = new Dish();
 
     }

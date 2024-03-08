@@ -4,7 +4,6 @@ package com.tu.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tu.common.BaseContext;
 import com.tu.common.R;
 import com.tu.dto.DishDto;
 import com.tu.entity.Category;
@@ -13,13 +12,11 @@ import com.tu.entity.DishFlavor;
 import com.tu.service.ICategoryService;
 import com.tu.service.IDishFlavorService;
 import com.tu.service.IDishService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,7 +67,7 @@ public class DishController {
      * @return IPage
      */
     @GetMapping("/page")
-    public R<IPage<DishDto>> getDishPage(HttpServletResponse response, Integer page, Integer pageSize, String name) {
+    public R<IPage<DishDto>> getDishPage(Integer page, Integer pageSize, String name) {
         log.info("菜品多表查询分页");
 
         // 获取主表分页信息

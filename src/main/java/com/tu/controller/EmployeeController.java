@@ -140,9 +140,8 @@ public class EmployeeController extends HttpServlet {
     /**
      * 员工信息修改/状态更新
      *
-     * @param request
-     * @param employee
-     * @return
+     * @param employee 职工类
+     * @return String
      */
     @PutMapping
     public R<String> editEmployee(@RequestBody Employee employee) {

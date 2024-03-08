@@ -28,9 +28,9 @@ mybatis-plus:
     banner: off # 关闭mybatis plus启动图标
     db-config:
       id-type: assign_id
-#      logic-delete-field: deleted
-#      logic-not-delete-value: 0 # 未删除为0
-#      logic-delete-value: 1 # 删除后为1
+      logic-delete-field: deleted
+      logic-not-delete-value: 0 # 未删除为0
+      logic-delete-value: 1 # 删除后为1
 server:
   port: 8080
 reggie:

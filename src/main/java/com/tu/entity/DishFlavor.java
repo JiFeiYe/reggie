@@ -72,5 +72,7 @@ public class DishFlavor implements Serializable {
     @TableField(value = "update_user", fill = FieldFill.INSERT_UPDATE)
     private Long updateUser;
 
+    @TableLogic
+    private Integer isDeleted;
 
 }

@@ -73,7 +73,7 @@ public class EmployeeController extends HttpServlet {
      */
     @PostMapping("/logout")
     public R<String> Logout(HttpServletRequest request) {
-        request.removeAttribute("employee");
+        request.getSession().removeAttribute("employee");
         return R.success("退出成功！");
     }
 

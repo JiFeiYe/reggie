@@ -99,7 +99,7 @@ public class CategoryController {
         log.info("获取菜品分类列表，type: {}", type);
 
         LambdaQueryWrapper<Category> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Category::getType, type).orderByDesc(Category::getUpdateTime);
+        lqw.eq(null != type, Category::getType, type).orderByDesc(Category::getUpdateTime);
         List<Category> lts = categoryService.list(lqw);
         return R.success(lts);
     }

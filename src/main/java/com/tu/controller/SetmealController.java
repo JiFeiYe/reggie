@@ -12,13 +12,13 @@ import com.tu.entity.SetmealDish;
 import com.tu.service.ICategoryService;
 import com.tu.service.ISetmealDishService;
 import com.tu.service.ISetmealService;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -179,4 +179,24 @@ public class SetmealController {
         setmealService.update(setmeal, lqw);
         return R.success("启售成功！");
     }
+
+    /**
+     * 获取菜品分类对应的套餐
+     *
+     * @param categoryId 分类id
+     * @param status     状态
+     * @return SetmealDto
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> setmealList(Long categoryId, Integer status) {
+        log.info("开始获取菜品分类对应的套餐");
+
+        LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(Setmeal::getCategoryId, categoryId)
+                .eq(Setmeal::getStatus, status)
+                .orderByDesc(Setmeal::getUpdateTime);
+        List<Setmeal> setmeals = setmealService.list(lqw);
+        return R.success(setmeals);
+    }
+
 }

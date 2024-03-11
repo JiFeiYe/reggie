@@ -195,13 +195,26 @@ public class DishController {
      * @return List-Dish
      */
     @GetMapping("/list")
-    public R<List<Dish>> queryDishList(Long categoryId) {
+    public R<List<DishDto>> queryDishList(Long categoryId) {
         log.info("菜品分类查询对应的菜品数据 categoryId: {}", categoryId);
 
         LambdaQueryWrapper<Dish> lqw = new LambdaQueryWrapper<>();
         lqw.eq(Dish::getCategoryId, categoryId)
                 .eq(Dish::getStatus, 1);
         List<Dish> dishes = dishService.list(lqw);
-        return R.success(dishes);
+
+        List<DishDto> dishDtos =  dishes.stream().map((dish) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(dish, dishDto);
+            Category category = categoryService.getById(dish.getCategoryId());
+            dishDto.setCategoryName(category.getName());
+
+            LambdaQueryWrapper<DishFlavor> lqw1 = new LambdaQueryWrapper<>();
+            lqw1.eq(DishFlavor::getDishId, dish.getId());
+            List<DishFlavor> dishFlavors = dishFlavorService.list(lqw1);
+            dishDto.setFlavors(dishFlavors);
+            return dishDto;
+        }).toList();
+        return R.success(dishDtos);
     }
 }

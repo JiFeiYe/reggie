@@ -5,20 +5,19 @@ spring:
     url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC&rewriteBatchedStatements=TRUE
     username: ll
     password: 1
+  redis:
+    host: 192.168.38.129
+    database: 0
+    port: 6379
+      #    # 配置 DataSource Driver
+      #    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+      #    #    # 指定 YAML 配置文件
+      #    url: jdbc:shardingsphere:classpath:sharding.yaml
 
-#    # 配置 DataSource Driver
-#    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-#    #    # 指定 YAML 配置文件
-#    url: jdbc:shardingsphere:classpath:sharding.yaml
+      #  cache:
+      #    redis:
+      #      time-to-live: 1800000 # 设置缓存过期时间
 
-  #  cache:
-  #    redis:
-  #      time-to-live: 1800000 # 设置缓存过期时间
-  #  data:
-  #    redis:
-  #      host: 192.168.38.129
-  #      database: 0
-  #      port: 6379
   main:
     banner-mode: off # 关闭SpringBoot启动图标(banner)
     allow-bean-definition-overriding: true # 允许bean定义覆盖，后定义的覆盖先定义的

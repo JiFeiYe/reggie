@@ -130,4 +130,21 @@ public class AddressBookController {
         addressBookService.removeById(ids);
         return R.success("删除成功！");
     }
+
+    /**
+     * 获取默认地址
+     *
+     * @return AddressBook
+     */
+    @GetMapping("/default")
+    public R<AddressBook> getDefaultAddress() {
+        log.info("开始获取默认地址");
+
+        Long userId = BaseContext.getCurrentId();
+        LambdaQueryWrapper<AddressBook> lqw = new LambdaQueryWrapper<>();
+        lqw.eq(AddressBook::getUserId, userId)
+                .eq(AddressBook::getIsDefault, 1);
+        AddressBook address = addressBookService.getOne(lqw);
+        return R.success(address);
+    }
 }

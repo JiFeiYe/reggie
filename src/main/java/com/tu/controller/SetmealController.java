@@ -16,10 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -42,6 +44,9 @@ public class SetmealController {
 
     @Autowired
     private ICategoryService categoryService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 套餐分页查询
@@ -90,6 +95,9 @@ public class SetmealController {
         log.info("套餐多表新增 {}", setmealDto);
 
         setmealService.saveWithSetmealDish(setmealDto);
+        String key = "setmeal_" + setmealDto.getCategoryId() + "_1";
+        redisTemplate.delete(key);
+
         return R.success("保存成功！");
     }
 
@@ -127,6 +135,9 @@ public class SetmealController {
         log.info("修改套餐 setmealDto: {}", setmealDto);
 
         setmealService.updateWithSetmealDish(setmealDto);
+        String key = "setmeal_" + setmealDto.getCategoryId() + "_1";
+        redisTemplate.delete(key);
+
         return R.success("修改成功！");
     }
 
@@ -139,6 +150,17 @@ public class SetmealController {
     @DeleteMapping
     public R<String> deleteSetmeal(@RequestParam List<Long> ids) {
         log.info("多表删除套餐 ids: {}", ids);
+
+        // 删除缓存
+        LambdaQueryWrapper<Setmeal> setmealLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        setmealLambdaQueryWrapper.in(Setmeal::getId, ids);
+        List<Setmeal> setmeals = setmealService.list(setmealLambdaQueryWrapper);
+        for (Setmeal setmeal : setmeals) {
+            Long categoryId = setmeal.getCategoryId();
+            String key = "setmeal_" + categoryId + "_1";
+            log.info("key:{}", key);
+            redisTemplate.delete(key);
+        }
 
         setmealService.removeSetmeal(ids);
         return R.success("删除成功！");
@@ -191,11 +213,18 @@ public class SetmealController {
     public R<List<Setmeal>> setmealList(Long categoryId, Integer status) {
         log.info("开始获取菜品分类对应的套餐");
 
+        String key = "setmeal_" + categoryId + "_1";
+        List<Setmeal> setmeals = (List<Setmeal>) redisTemplate.opsForValue().get(key);
+        if (setmeals != null) {
+            return R.success(setmeals);
+        }
+
         LambdaQueryWrapper<Setmeal> lqw = new LambdaQueryWrapper<>();
         lqw.eq(Setmeal::getCategoryId, categoryId)
                 .eq(Setmeal::getStatus, status)
                 .orderByDesc(Setmeal::getUpdateTime);
-        List<Setmeal> setmeals = setmealService.list(lqw);
+        setmeals = setmealService.list(lqw);
+        redisTemplate.opsForValue().set(key, setmeals, 30, TimeUnit.MINUTES);
         return R.success(setmeals);
     }
 

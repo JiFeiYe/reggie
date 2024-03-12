@@ -27,8 +27,6 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         log.info("新增，从线程中取出id：{}", BaseContext.getCurrentId());
         metaObject.setValue("createUser", BaseContext.getCurrentId());
         metaObject.setValue("updateUser", BaseContext.getCurrentId());
-
-
     }
 
     @Override

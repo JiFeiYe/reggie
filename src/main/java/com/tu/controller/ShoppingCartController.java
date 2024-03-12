@@ -82,6 +82,7 @@ public class ShoppingCartController {
         lqw.eq(ShoppingCart::getUserId, userId)
                 .orderByDesc(ShoppingCart::getCreateTime);
         List<ShoppingCart> shoppingCarts = shoppingCartService.list(lqw);
+        log.info("查询到的购物车：{}", shoppingCarts);
         return R.success(shoppingCarts);
     }
 

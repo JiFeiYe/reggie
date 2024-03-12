@@ -17,4 +17,6 @@ import java.util.List;
 public class OrdersDto extends Orders {
 
     private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    private String userNamee;
 }

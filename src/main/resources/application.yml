@@ -1,18 +1,19 @@
 spring:
   datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC&rewriteBatchedStatements=TRUE
-    username: ll
-    password: 1
+    # 配置 DataSource Driver
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    #    # 指定 YAML 配置文件
+    url: jdbc:shardingsphere:classpath:sharding.yaml
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC&rewriteBatchedStatements=TRUE
+#    username: ll
+#    password: 1
   redis:
     host: 192.168.38.129
     database: 0
     port: 6379
-#    # 配置 DataSource Driver
-#    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
-#    #    # 指定 YAML 配置文件
-#    url: jdbc:shardingsphere:classpath:sharding.yaml
+
   main:
     banner-mode: off # 关闭SpringBoot启动图标(banner)
     allow-bean-definition-overriding: true # 允许bean定义覆盖，后定义的覆盖先定义的

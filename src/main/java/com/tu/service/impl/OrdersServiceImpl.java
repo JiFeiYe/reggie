@@ -48,6 +48,9 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
      */
     @Transactional
     public void submit(Orders orders) {
+        System.out.println("*************************************************");
+        System.out.println("userId:" + BaseContext.getCurrentId());
+        System.out.println("*************************************************");
         //获得当前用户id
         Long userId = BaseContext.getCurrentId();
 

@@ -83,6 +83,7 @@ public class UserController {
             if (user == null) {
                 // 新用户
                 user = new User();
+                user.setName("momo");
                 user.setPhone(phone);
                 user.setStatus(1);
                 userService.save(user);

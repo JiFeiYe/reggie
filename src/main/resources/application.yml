@@ -4,11 +4,11 @@ spring:
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
     #    # 指定 YAML 配置文件
     url: jdbc:shardingsphere:classpath:sharding.yaml
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC&rewriteBatchedStatements=TRUE
-#    username: ll
-#    password: 1
+  #    type: com.alibaba.druid.pool.DruidDataSource
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3306/reggie?serverTimezone=UTC&rewriteBatchedStatements=TRUE
+  #    username: ll
+  #    password: 1
   redis:
     host: 192.168.38.129
     database: 0
@@ -36,4 +36,4 @@ mybatis-plus:
 server:
   port: 8080
 reggie:
-  path: D:\CODE\JAVA\reggie\img\
+  path: C:\Users\LLeavee\Desktop\reggie\img

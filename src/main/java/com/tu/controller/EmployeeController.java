@@ -7,13 +7,17 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tu.common.R;
 import com.tu.entity.Employee;
 import com.tu.service.IEmployeeService;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -27,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/employee")
+@Api(tags = "职工相关api")
 public class EmployeeController extends HttpServlet {
 
     @Autowired
@@ -36,11 +41,12 @@ public class EmployeeController extends HttpServlet {
      * 登入
      *
      * @param employee 职工类
-     * @param request request
+     * @param request  request
      * @return R
      */
     @PostMapping("/login")
-    public R<Employee> Login(@RequestBody Employee employee, HttpServletRequest request) {
+    @ApiOperation("登入验证")
+    public R<Employee> Login(@ApiParam(name = "emplyee", value = "用户名密码") @RequestBody Employee employee, HttpServletRequest request) {
         String password = employee.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
 

@@ -1,9 +1,9 @@
 package com.tu.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tu.entity.OrderDetail;
 import com.tu.mapper.OrderDetailMapper;
 import com.tu.service.IOrderDetailService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

@@ -10,7 +10,6 @@ import com.tu.common.R;
 import com.tu.dto.OrdersDto;
 import com.tu.entity.OrderDetail;
 import com.tu.entity.Orders;
-import com.tu.entity.User;
 import com.tu.service.IOrderDetailService;
 import com.tu.service.IOrdersService;
 import com.tu.service.IUserService;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>

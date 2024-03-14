@@ -2,12 +2,12 @@ package com.tu.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tu.common.BaseContext;
 import com.tu.common.CustomerException;
 import com.tu.entity.*;
 import com.tu.mapper.OrdersMapper;
 import com.tu.service.*;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +44,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
     /**
      * 用户下单
+     *
      * @param orders 订单
      */
     @Transactional

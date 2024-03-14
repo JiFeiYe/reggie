@@ -102,7 +102,7 @@ public class ShoppingCartController {
         if (map.get("dishId") != null) {
             lqw.eq(ShoppingCart::getDishId, map.get("dishId"));
         } else {
-            lqw.eq(ShoppingCart::getSetmealId,map.get("setmealId"));
+            lqw.eq(ShoppingCart::getSetmealId, map.get("setmealId"));
         }
         ShoppingCart shoppingCart = shoppingCartService.getOne(lqw);
         if (shoppingCart.getNumber() > 1) {
@@ -119,6 +119,7 @@ public class ShoppingCartController {
 
     /**
      * 清空购物车
+     *
      * @return String
      */
     @DeleteMapping("clean")

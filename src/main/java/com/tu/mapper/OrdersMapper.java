@@ -1,7 +1,7 @@
 package com.tu.mapper;
 
-import com.tu.entity.Orders;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.tu.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

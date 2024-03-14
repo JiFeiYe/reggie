@@ -1,9 +1,9 @@
 package com.tu.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tu.entity.User;
 import com.tu.mapper.UserMapper;
 import com.tu.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

@@ -158,7 +158,7 @@ public class DishController {
         for (Dish dish : dishes) {
             Long categoryId = dish.getCategoryId();
             String key = "dish_" + categoryId + "_1";
-            log.info("key:{}",key);
+            log.info("key:{}", key);
             redisTemplate.delete(key);
         }
 

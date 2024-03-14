@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.tu.common.R;
 import com.tu.entity.User;
 import com.tu.service.IUserService;
-import com.tu.utils.SMSUtils;
 import com.tu.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +13,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
@@ -63,7 +61,7 @@ public class UserController {
     /**
      * 移动端登入验证
      *
-     * @param m map
+     * @param m       map
      * @param session session
      * @return User
      */
@@ -97,6 +95,7 @@ public class UserController {
 
     /**
      * 移动端登出账号
+     *
      * @param session session
      * @return String
      */
